@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "amydim" "\0"
+            VALUE "FileDescription", "karmo" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "amydim" "\0"
+            VALUE "InternalName", "karmo" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "amydim.exe" "\0"
-            VALUE "ProductName", "amydim" "\0"
+            VALUE "OriginalFilename", "karmo.exe" "\0"
+            VALUE "ProductName", "karmo" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
