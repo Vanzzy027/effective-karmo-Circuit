@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../services/device_controller.dart';
 import '../screens/light_control_screen.dart';
 import '../auth/register_screen.dart';
-
+import '../screens/about_page.dart';
 class HomeScreen extends StatefulWidget {
   final String username;
 
@@ -52,7 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     const SizedBox(height: 25),
                     // User Header now contains the buttons flexed to the right
-                    _buildUserHeader(widget.username, isDark, controller),
+                    _buildUserHeader(widget.username, isDark, controller, context),
+
 
                     const SizedBox(height: 30),
                     _buildHeroConnectivityCard(context, controller, isDark),
@@ -77,58 +78,108 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // ================= INTEGRATED USER HEADER & CONTROLS =================
 
-  Widget _buildUserHeader(String username, bool isDark, DeviceController controller) {
+  Widget _buildUserHeader(String username, bool isDark, DeviceController controller, BuildContext context) {
+    // Helper: responsive action button
+    Widget _actionButton({
+      required IconData icon,
+      required VoidCallback onPressed,
+      Color? color,
+      Color? iconColor,
+      bool isLoading = false,
+    }) {
+      final screenWidth = MediaQuery.of(context).size.width;
+      final double containerSize = screenWidth < 350 ? 40 : 48;
+      final double iconSize = screenWidth < 350 ? 18 : 22;
+
+      return Container(
+        height: containerSize,
+        width: containerSize,
+        decoration: BoxDecoration(
+          color: color ?? (isDark ? Colors.white10 : Colors.black.withOpacity(0.04)),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: isLoading
+            ? Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CircularProgressIndicator(
+            strokeWidth: 2.0,
+            color: iconColor ?? (isDark ? Colors.white : Colors.black87),
+          ),
+        )
+            : IconButton(
+          padding: EdgeInsets.zero,
+          icon: Icon(icon, size: iconSize, color: iconColor ?? (isDark ? Colors.white : Colors.black87)),
+          onPressed: onPressed,
+        ),
+      );
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Left Side: Greeting
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "KARMO CONTROL INTERFACE",
-              style: TextStyle(
-                color: isDark ? Colors.white38 : Colors.black38,
-                fontWeight: FontWeight.w900,
-                fontSize: 12,
-                letterSpacing: 1.5,
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "KARMO CONTROL INTERFACE",
+                style: TextStyle(
+                  color: isDark ? Colors.white38 : Colors.black38,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 12,
+                  letterSpacing: 1.5,
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              "Hello, $username",
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : Colors.black,
+              const SizedBox(height: 4),
+              Text(
+                "Hello, $username",
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w900,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+                overflow: TextOverflow.ellipsis, // prevents overflow
               ),
-            ),
-          ],
+            ],
+          ),
         ),
 
-        // Right Side: Action Buttons (Flexed)
+        // Right Side: Action Buttons
         Row(
           children: [
-            _buildCircleAction(
+            _actionButton(
               icon: controller.isScanning ? Icons.sync : Icons.refresh_rounded,
               onPressed: () => controller.scanNetwork(),
               isLoading: controller.isScanning,
-              isDark: isDark,
             ),
-            const SizedBox(width: 12),
-            _buildCircleAction(
+            const SizedBox(width: 8),
+            _actionButton(
+              icon: Icons.info_outline,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AboutPage()),
+                );
+              },
+            ),
+            const SizedBox(width: 8),
+            _actionButton(
               icon: Icons.power_settings_new_rounded,
               color: Colors.redAccent.withOpacity(0.1),
               iconColor: Colors.redAccent,
               onPressed: () => _handleLogout(context),
-              isDark: isDark,
             ),
           ],
         ),
       ],
     );
   }
+
+
+
+
 
   // ================= MODERN HERO COMPONENT =================
 
